@@ -1,1 +1,0 @@
-recent_contents = Content.objects.filter(upload_date__gte=timezone.now() - timezone.timedelta(days=7))
