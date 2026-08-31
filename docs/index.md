@@ -15,7 +15,7 @@ hide:
             PBE_26.3_8003 II
         </div>
         <div class="card-content">
-            <p class="contributors">Bento Cantina, Carlos Macedo, Julia Ferreira, Lucas Villela </p>
+            <p class="contributors">Bento Couto, Carlos Macedo, Julia Ferreira, Lucas Villela </p>
             <br />
             <a href="https://github.com/Projetos-de-Extensao/PECDII_26.2_8003_II" class="button primary-btn">
                 <span class="octicon-arrow-right-24:"></span> Ver Repositório
