@@ -17,7 +17,7 @@ do sistema de gerenciamento do Teste de Progresso.
 
 ## Protótipo de baixa fidelidade
 <p align ="justify">
-Link para acesso do figma: <a href= "https://www.figma.com/design/TCCSQQkndPEUj0fiII65Sl/Untitled?node-id=0-1&t=GqGREK8jpLz5qK5k-1" <Protótipo>
+Link para acesso do figma: <a href="https://www.figma.com/design/TCCSQQkndPEUj0fiII65Sl/Untitled?node-id=0-1&t=GqGREK8jpLz5qK5k-1">Protótipo</a>
 </p>
 
 ### Versão 1.0
@@ -39,5 +39,4 @@ A partir da elaboração do protótipo foi possível ter uma noção inicial e d
 ## Autor(es)
 
 | Data     | Versão | Descrição                            | Autor(es)                                                                            |
-| -------- | ------- | -------------------------------------- | ------------------------------------------------------------------------------------ |
-
+| 13/09/2026 | 1 | Criação da primeira versão do protótipo de baixa fidelidade | Bento, Carlos, Julia e Lucas
