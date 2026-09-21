@@ -1,0 +1,76 @@
+@startuml
+
+title Diagrama de Classes - Sistema de Gerenciamento do Teste Progresso
+
+skinparam classAttributeIconSize 0
+skinparam monochrome true
+skinparam shadowing false
+
+package "Registro e Verificação de Usuários" {
+
+    abstract class Usuario {
+        - id: int
+        - nome: String
+        - email: String
+        - matricula: String
+    }
+
+    class Aluno
+
+    class Professor
+
+    class Coordenacao
+
+    Usuario <|-- Aluno
+    Usuario <|-- Professor
+    Usuario <|-- Coordenacao
+}
+
+package "Estrutura Acadêmica" {
+
+    class Unidade {
+        - id: int
+        - nome: String
+        - endereco: String
+    }
+
+    class Curso {
+        - id: int
+        - nome: String
+    }
+
+    class Sala {
+        - id: int
+        - numero: String
+        - capacidade: int
+    }
+}
+
+package "Organização da Avaliação" {
+
+    enum Funcao {
+        ALUNO
+        FISCAL
+    }
+
+    class Alocacao {
+        - id: int
+        - funcao: Funcao
+    }
+}
+
+' ============================
+' RELACIONAMENTOS
+' ============================
+
+Unidade "1" -- "0..*" Usuario : pertence >
+
+Curso "1" -- "0..*" Aluno : pertence >
+
+Unidade "1" *-- "1..*" Sala : possui >
+
+Usuario "1" -- "0..*" Alocacao : recebe >
+
+Sala "1" -- "0..*" Alocacao : recebe >
+
+@enduml

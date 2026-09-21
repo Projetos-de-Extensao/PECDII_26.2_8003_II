@@ -1,5 +1,5 @@
 ---
-id: diagrama_de_cclasses
+id: diagrama_de_classes
 title: Diagrama de Classes
 ---
 
