@@ -62,49 +62,12 @@ Sendo as necessidades do coordenador e secretaria organizar os recursos disponí
 
 - **Seleção de Ideias**: Os critérios utilizados para a seleção do que será desenvolvido foi a opinião dos integrantes do grupo de desenvolvimento do projeto.
 - **Ideias Selecionadas**:
-
- 1. Dashboard
-
-Para apresentar uma visão geral da aplicação.
-
-2. Cadastro de recursos
-
-Para gerenciar:
-
-alunos;
-professores;
-salas;
-cursos;
-unidades.
-3. Criação do Teste
-
-Para definir:
-
-data;
-horário;
-unidades;
-cursos participantes.
-4. Geração da alocação
-
-Para distribuir os alunos e professores considerando a disponibilidade e capacidade das salas.
-
-5. Visualização da alocação
-
-Para consultar:
-
-sala;
-alunos;
-professor;
-curso;
-unidade.
-6. Identificação de conflitos
-
-Para informar situações como:
-
-sala com capacidade insuficiente;
-professor duplicado;
-aluno sem sala;
-sala indisponível.
+	- Dashboard: Para apresentar uma visão geral da aplicação.
+	- Cadastro de recursos para gerenciar: alunos; professores; salas; cursos e unidades.
+	- Criação do Teste para definir: data; horário; unidades; cursos participantes.
+	- Geração da alocação: Para distribuir os alunos e professores considerando a disponibilidade e capacidade das salas.
+	- Visualização da alocação para consultar: sala; alunos; professor; curso; unidade.
+	- Identificação de conflitos para informar situações como: sala com capacidade insuficiente; professor duplicado; aluno sem sala; sala indisponível.
 
 #### **3.4. Prototipagem**
 
