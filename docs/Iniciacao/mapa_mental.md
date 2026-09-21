@@ -24,10 +24,6 @@ Foi levantado um ponto importante sobre o app e, assim, foi produzido o mapa men
 [![Mapa mental](../assets/Mapas_Mentais/mp_1.png)](../assets/Mapas_Mentais/mp_1.png)
  
  
-### Mapa mental 2
- 
-[![Mapa mental](../assets/Mapas_Mentais/image.png)](../assets/Mapas_Mentais/image.png)
- 
 ## Conclusão
  
 <p align = "justify">
