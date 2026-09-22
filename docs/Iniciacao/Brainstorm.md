@@ -3,127 +3,120 @@ id: brainstorm
 title: Brainstorm
 ---
  
-## Introdução
-<p align = "justify">
-O brainstorm é uma técnica de elicitação de requisitos que consiste em reunir a equipe e discutir sobre diversos tópicos gerais do projeto apresentados no documento problema de negócio. No brainstorm o diálogo é incentivado e críticas são evitadas para permitir que todos colaborem com suas próprias ideias.
-</p>
- 
-## Metodologia
-<p align = "justify">
-A equipe se reuniu para debater ideias gerais sobre o projeto via..., começou .... e terminou..., onde o XXXX XXXX foi o moderador, direcionando a equipe com questões pré-elaboradas, e transcrevendo as respostas para o documento.
-</p>
- 
 ## Brainstorm
  
+## Metodologia
+
+A equipe se reuniu para discutir ideias e necessidades relacionadas ao desenvolvimento de um sistema de gestão para o Teste Progresso. Durante a reunião, foram levantadas questões relacionadas à organização dos alunos, cursos, salas, unidades e fiscais, considerando também os diferentes usuários envolvidos no processo. As respostas foram utilizadas para identificar as principais necessidades do sistema e elicitar os primeiros requisitos do projeto.
+
 ## Versão 1.0
- 
+
 ## Perguntas
- 
+
 ### 1. Qual o objetivo principal da aplicação?
- 
-<p align = "justify">
-<b>XXXX</b> - Deve ser uma plataforma onde qualquer pessoa possa...
-</p>
- 
-<b>ZZZ</b> - A plataforma deve fornece...
- 
-<b>YYYY</b> - O objetivo da aplicação é....
- 
-<b>WWWW</b> - O principal objetivo da aplicação é a...
- 
-<b>KKKK</b> - A plataforma deve gerenciar...
-</p>
- 
----
- 
-### 2. Como será o processo para cadastrar um novo cliente?
- 
-<p align = "justify">
-<b>XXXX</b> - O moderador deverá fazer login e...
- 
-<b>YYYY</b> - O cliente...
- 
-<b>WWWW</b> - Com o usuário logado, ele deverá...
 
-<b>ZZZZ</b> - O cliente...
- 
-<b>KKK</b> - O cliente...
- 
----
- 
-### 3. Como será a forma de adicionar produtos?
- 
-<p align = "justify">
-<b>XXXX</b> - O cliente ao cadastrar...
-</p>
- 
-<p align = "justify">
-<b>YYYYY</b> - O produto tem...
-</p>
- 
-<b>ZZZZ</b> - O produto....
- 
-<b>XXXX</b> - O produto....
+**Bento** - O objetivo principal é desenvolver um sistema web para auxiliar na gestão e organização do Teste Progresso.
 
- 
----
- 
-### 4. Outras perguntas pertinentes ao contexto
+**Carlos** - A aplicação deve facilitar o gerenciamento das informações relacionadas aos alunos, cursos, salas e unidades utilizadas durante a aplicação das avaliações.
 
-<p align = "justify">
-<b>XXXX</b> - Com a localização...
- 
-<b>YYYY</b> - O cliente...
- 
-<b>ZZZ</b> - O cliente...
- 
----
- 
-### 5. "Outras perguntas pertinentes ao contexto", Como seria a forma de adicionar do cliente adicionar os produtos ?
-<p align = "justify">
-<b>XXX</b> - O cliente....
-</p>
- 
-### 6. Quais informações seriam interessante para o cliente?
-<p align = "justify">
-   <b>XXX</b> - Informações...
-   
-   <b>ZZZZ</b> - O cliente usuário poderá acessar informações...
+**Julia** - O sistema deve auxiliar a coordenação e os professores na organização dos alunos e dos fiscais responsáveis pelas salas.
 
-   <b>WWWWs</b> - O usuário poderá ver scouts de partidas do torneio, ver as regras dos torneios, locais e data das partidas.
-   
-</p>
- 
-### Requisitos elicitados
- 
-|ID|Descrição|
-|----|-------------|
-|BS01| O cliente...|
-|BS02| O cliente...|
-|BS03| O cliente...|
-|BS04| O cliente...|
-|BS05| O cliente...|
-|BS06| O cliente...|
-|BS07| O cliente...|
-|BS08| O cliente...|
-|BS09| O cliente...|
-|BS10| O produto...|
-|BS11| O produto...|
-|BS12| O produto...|
-|BS13| O produto...|
-|BS14| O produto...|
-|BS15| O produto...|
- 
+**Lucas** - O principal objetivo da aplicação é centralizar as informações do Teste Progresso em um único sistema, facilitando sua organização e gerenciamento.
+
+---
+
+### 2. Como será o processo para cadastrar e gerenciar os usuários?
+
+**Bento** - O sistema deverá permitir o gerenciamento dos usuários envolvidos no Teste Progresso.
+
+**Carlos** - Os usuários deverão ser organizados de acordo com seus respectivos perfis, como coordenação, professores e alunos.
+
+**Julia** - As informações dos usuários deverão ser armazenadas no sistema para que possam ser relacionadas às demais informações da aplicação.
+
+**Lucas** - O gerenciamento dos usuários deverá permitir que o sistema identifique os diferentes participantes envolvidos na organização e realização do Teste Progresso.
+
+---
+
+### 3. Como será a forma de cadastrar e gerenciar os cursos?
+
+**Bento** - O sistema deverá permitir o cadastro e gerenciamento dos cursos participantes do Teste Progresso.
+
+**Carlos** - Cada aluno deverá estar relacionado ao seu respectivo curso para facilitar a organização das avaliações.
+
+**Julia** - As informações dos cursos deverão ser armazenadas no banco de dados para que possam ser utilizadas na organização dos alunos.
+
+**Lucas** - O gerenciamento dos cursos deverá facilitar a consulta e a organização dos alunos de acordo com suas respectivas formações.
+
+---
+
+### 4. Como será feita a organização dos alunos nas salas?
+
+**Bento** - Os alunos deverão ser distribuídos nas salas disponíveis para a realização das avaliações.
+
+**Carlos** - A distribuição deverá considerar a quantidade de alunos em cada sala para evitar uma organização inadequada.
+
+**Julia** - O sistema deverá permitir visualizar quais alunos estão relacionados a cada sala.
+
+**Lucas** - A coordenação deverá conseguir consultar a organização dos alunos por sala e unidade.
+
+---
+
+### 5. Como será feita a organização dos fiscais?
+
+**Bento** - Os fiscais deverão ser associados às salas onde serão responsáveis pela aplicação da avaliação.
+
+**Carlos** - A organização dos fiscais deverá considerar as salas e unidades utilizadas no Teste Progresso.
+
+**Julia** - O sistema deverá permitir identificar quais fiscais estão relacionados a cada sala.
+
+**Lucas** - A centralização dessas informações deverá facilitar o controle dos fiscais durante a aplicação das avaliações.
+
+---
+
+### 6. Quais informações seriam interessantes para os usuários?
+
+**Bento** - Os usuários deverão ter acesso às informações relacionadas ao Teste Progresso de acordo com sua função no sistema.
+
+**Carlos** - A coordenação deverá conseguir consultar informações sobre alunos, cursos, salas, unidades e fiscais.
+
+**Julia** - Os professores deverão conseguir consultar as informações necessárias para auxiliar na realização das avaliações.
+
+**Lucas** - Os alunos deverão ter suas informações relacionadas ao curso e à sala em que realizarão a avaliação.
+
+---
+
+## Requisitos elicitados
+
+| **ID** | **Descrição** |
+| --------------- | ------------ |
+| BS01 | O sistema deve permitir o gerenciamento dos usuários envolvidos no Teste Progresso. |
+| BS02 | O sistema deve considerar diferentes tipos de usuários, como coordenação, professores e alunos. |
+| BS03 | O sistema deve armazenar as informações dos usuários. |
+| BS04 | O sistema deve permitir o cadastro e gerenciamento dos cursos. |
+| BS05 | O sistema deve relacionar os alunos aos seus respectivos cursos. |
+| BS06 | O sistema deve permitir o cadastro e gerenciamento das unidades onde serão realizadas as avaliações. |
+| BS07 | O sistema deve permitir o cadastro e gerenciamento das salas utilizadas nas unidades. |
+| BS08 | O sistema deve permitir relacionar as salas às respectivas unidades. |
+| BS09 | O sistema deve permitir organizar os alunos nas salas disponíveis para a realização das avaliações. |
+| BS10 | O sistema deve considerar a quantidade de alunos por sala durante a organização das avaliações. |
+| BS11 | O sistema deve permitir o gerenciamento dos fiscais responsáveis pelas salas. |
+| BS12 | O sistema deve permitir relacionar os fiscais às salas onde atuarão. |
+| BS13 | O sistema deve permitir consultar as informações relacionadas aos alunos, cursos, salas, unidades e fiscais. |
+| BS14 | O backend deve armazenar e gerenciar os dados necessários para o funcionamento do sistema. |
+| BS15 | O backend deve disponibilizar os recursos necessários para a comunicação entre o banco de dados e o frontend da aplicação. |
+
 ## Conclusão
-<p align = "justify">
-Através da aplicação da técnica, foi possível elicitar alguns dos primeiros requisitos do projeto.
-</p>
+
+Através da aplicação da técnica de Brainstorm, foi possível levantar as principais necessidades relacionadas ao sistema de gestão do Teste Progresso e elicitar os primeiros requisitos do projeto. Foram identificados aspectos relacionados ao gerenciamento de usuários, cursos, alunos, unidades, salas e fiscais, além da organização dos alunos para a realização das avaliações.
+
+Os requisitos levantados servirão como base para as próximas etapas do desenvolvimento do projeto, orientando a definição das funcionalidades e a construção do backend da aplicação.
+
 ## Referências Bibliográficas
- 
+
 > BARBOSA, S. D. J; DA SILVA, B. S. Interação humano-computador. Elsevier, 2010.
- 
- 
+
 ## Autor(es)
-| Data | Versão | Descrição | Autor(es) |
-| -- | -- | -- | -- |
-| DD/MM/YYYY | 1.0 | Criação do documento | XXX XXXX, XXXX XXXX, YYY YYYY e ZZZ XXXX |
+
+| **Data** | **Versão** | **Descrição** | **Autor(es)** |
+| -------------------------------- | --- | -------------------- | ---------------------------------------- |
+| 20/09/2026 | 1.0 | Criação do documento | Bento, Carlos, Julia e Lucas |
