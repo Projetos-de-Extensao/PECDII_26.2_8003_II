@@ -99,4 +99,7 @@ Sendo as necessidades do coordenador e secretaria organizar os recursos disponí
 
 ---
 
+### **6. Slides** 
+
+- [Apresentação no Canva](https://canva.link/6d0b2fs4olu0qmw)
 
