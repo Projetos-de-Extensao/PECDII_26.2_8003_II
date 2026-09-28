@@ -1,0 +1,69 @@
+@startuml
+
+title Diagrama de Sequência - Inscrição no Teste Progresso
+
+actor Aluno
+
+boundary "Tela de Inscrição" as Tela
+control "Controle de Inscrição" as Controle
+
+entity "Teste Progresso" as Teste
+entity "Aluno" as EntAluno
+entity "Matéria" as Materia
+entity "Inscrição" as Inscricao
+
+Aluno -> Tela : Solicita inscrição
+Tela -> Controle : Solicita dados para inscrição
+
+Controle -> Teste : Consulta período de inscrição
+Teste --> Controle : Retorna situação do período
+
+Controle -> EntAluno : Consulta matérias em curso
+EntAluno --> Controle : Retorna matérias disponíveis
+
+Controle --> Tela : Apresenta matérias disponíveis
+Tela --> Aluno : Exibe matérias para seleção
+
+Aluno -> Tela : Seleciona matéria para bônus
+Tela -> Controle : Envia matéria escolhida
+
+Controle -> Materia : Valida matéria selecionada
+Materia --> Controle : Retorna matéria válida
+
+Controle -> Inscricao : Registra inscrição\ncom matéria escolhida
+Inscricao --> Controle : Confirma registro
+
+Controle --> Tela : Confirma inscrição realizada
+Tela --> Aluno : Exibe confirmação
+
+alt Aluno altera a matéria escolhida
+    Aluno -> Tela : Seleciona nova matéria
+    Tela -> Controle : Envia nova matéria
+    Controle -> Materia : Valida nova matéria
+    Materia --> Controle : Retorna matéria válida
+    Controle -> Inscricao : Atualiza matéria escolhida
+    Inscricao --> Controle : Confirma alteração
+    Controle --> Tela : Confirma alteração
+    Tela --> Aluno : Exibe nova matéria escolhida
+
+else Aluno não possui matérias em curso
+    Controle -> EntAluno : Consulta matérias
+    EntAluno --> Controle : Nenhuma matéria encontrada
+    Controle --> Tela : Informa impossibilidade de inscrição
+    Tela --> Aluno : Exibe mensagem
+
+else Período de inscrição encerrado
+    Controle -> Teste : Consulta situação
+    Teste --> Controle : Período encerrado
+    Controle --> Tela : Informa período encerrado
+    Tela --> Aluno : Exibe mensagem
+
+else Aluno não seleciona matéria
+    Aluno -> Tela : Tenta concluir sem selecionar matéria
+    Tela -> Controle : Solicita conclusão
+    Controle --> Tela : Solicita seleção de matéria
+    Tela --> Aluno : Exibe mensagem
+
+end
+
+@enduml
