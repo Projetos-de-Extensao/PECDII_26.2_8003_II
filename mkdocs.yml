@@ -51,15 +51,19 @@ nav:
       - Pesquisa: Iniciacao/pesquisa.md
       - 5w2h: Iniciacao/5w2h.md
       - Design Thinking: Iniciacao/design_thinking.md
+      - documento de visão: documento_de_visao.md
       - Brainstorming: Iniciacao/Brainstorm.md
       - Mapa Mental: Iniciacao/mapa_mental.md
+      - metodologia: iniciação/metodologia.md
       - Prototipagem Baixa Fidelidade: Iniciacao/prototipo_baixa_fidelidade.md
   - Elaboração:
       - Index: Elaboracao/index.md
       - Requisitos: Elaboracao/levreq.md
       - Casos de Uso: Elaboracao/casos_de_uso.md
       - Diagrama de Classes: Elaboracao/diagrama_de_classes.md
+      - Diagrama de Classes: Elaboração/diagrama_de_classes.puml
       - Diagrama de Sequência: Elaboracao/diagrama_de_sequencia.md
+      - Diagrama de Sequência: Elaboracao/diagrama_de_sequencia.puml
   - Construção:
       - Index: Construcao/index.md
       - Github Workflows: Construcao/github_workflows.md
