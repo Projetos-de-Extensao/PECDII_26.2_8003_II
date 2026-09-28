@@ -25,18 +25,24 @@ title: Diagrama de Casos de Uso
 - Cronograma do Teste (Local e Horário)
 	- Confirmação (padrão = aula normal do dia)
 	- Alteração de local e/ou horário (o Aluno só altera o próprio cronograma)
+- Bônus
+	- Escolha da matéria para receber o bônus (Aluno)
 - Alocação
 	- Automática
 	- Identificação de Conflitos
 	- Ajuste Manual
 	- Geração de Lista
 	- Dashboard
+- Aplicação da Prova e Resultado
+	- Notificação de sala/horário (Aluno e Professor fiscal)
+	- Registro de presença
+	- Lançamento de nota e aplicação do bônus na matéria escolhida
 
 ### Atores
 
 - **Administrador** (Coordenação Acadêmica): acessa com seu e-mail/conta institucional da faculdade; responsável pelos cadastros, pela criação do Teste de Progresso e pela alocação de recursos.
-- **Professor**: acessa com seu e-mail/conta institucional da faculdade; consultado quanto à disponibilidade; atua como fiscal em uma sala.
-- **Aluno**: acessa com sua conta institucional da faculdade (mesmo login usado nos demais sistemas acadêmicos); por padrão realiza o teste no local e horário da sua aula normal no dia do teste, mas pode alterar manualmente local e/ou horário, se houver vaga; só pode visualizar/alterar o **próprio** cronograma, nunca o de outro aluno.
+- **Professor**: acessa com seu e-mail/conta institucional da faculdade; consultado quanto à disponibilidade; atua como fiscal em uma sala, registrando presença e participando do lançamento de nota.
+- **Aluno**: acessa com sua conta institucional da faculdade (mesmo login usado nos demais sistemas acadêmicos); por padrão realiza o teste no local e horário da sua aula normal no dia do teste, mas pode alterar manualmente local e/ou horário, se houver vaga; só pode visualizar/alterar o **próprio** cronograma, nunca o de outro aluno; escolhe uma matéria em curso para receber o bônus de nota do resultado do teste.
 - **Sistema**: executa validações, cálculo de alocação e detecção de conflitos.
 - **Sistema Acadêmico da Faculdade** (ator externo): autentica as credenciais institucionais de todos os usuários (Administrador, Professor e Aluno) via portal/SSO da faculdade; o sistema de Teste de Progresso não armazena senha de ninguém.
 
@@ -64,10 +70,16 @@ rectangle "Alocação do Teste de Progresso" {
   usecase (Informar Disponibilidade) as UC07
   usecase (Confirmar Cronograma do Teste\n(padrão: local/horário da aula normal)) as UC08
   usecase (Alterar Cronograma do Teste\n(local e/ou horário, próprio cronograma)) as UC09
+  usecase (Escolher Matéria\npara Bônus) as UC11
+  usecase (Notificar Aluno e Professor\n(Sala/Horário)) as UC12
+  usecase (Registrar Presença) as UC13
+  usecase (Lançar Nota e Aplicar Bônus\nna Matéria Escolhida) as UC14
 
   Administrador --> UC00
   Administrador --> UC01
+  Administrador --> UC14
   Professor --> UC00
+  Professor --> UC13
   Aluno --> UC00
   UC00 --> SA
 
@@ -77,10 +89,13 @@ rectangle "Alocação do Teste de Progresso" {
   UC02 ..> UC03 : <<extend>>
   UC02 ..> UC08 : <<include>>
   UC08 ..> UC09 : <<extend>>
+  UC08 ..> UC11 : <<include>>
   UC08 ..> UC04 : <<include>>
   UC04 ..> UC05 : <<include>>
   UC05 ..> UC06 : <<extend>>
+  UC04 ..> UC12 : <<include>>
   UC07 ..> UC04 : <<include>>
+  UC13 ..> UC14 : <<include>>
 }
 
 note right of UC02
@@ -96,6 +111,12 @@ note bottom of UC09
   para o cronograma do próprio Aluno logado.
 end note
 
+note bottom of UC14
+  Bônus só é aplicado se houver presença
+  registrada e matéria de bônus escolhida
+  pelo Aluno.
+end note
+
 @enduml
 ```
 
@@ -108,9 +129,12 @@ end note
 - `<<include>>` (Criar Teste de Progresso → Confirmar Cronograma do Teste): toda criação de teste aciona a definição do cronograma (local e horário) de cada aluno, cujo padrão é o local/horário da aula normal do aluno no dia do teste.
 - `<<extend>>` (Confirmar Cronograma do Teste → Alterar Cronograma do Teste): só ocorre quando o aluno opta manualmente por outro local e/ou horário, sujeito à disponibilidade de vaga, e restrito ao próprio cronograma.
 - `<<include>>` (Confirmar Cronograma do Teste → Realizar Alocação Automática): a alocação usa o cronograma confirmado de cada aluno (padrão ou alterado).
+- `<<include>>` (Confirmar Cronograma do Teste → Escolher Matéria para Bônus): ao confirmar o cronograma, o Aluno também escolhe (ou mantém) a matéria que receberá o bônus.
 - `<<include>>` (Realizar Alocação Automática → Identificar Conflitos de Alocação): toda alocação gerada precisa ser validada.
 - `<<extend>>` (Identificar Conflitos de Alocação → Ajustar Alocação Manualmente): só ocorre quando há conflito.
+- `<<include>>` (Realizar Alocação Automática → Notificar Aluno e Professor): concluída a alocação, o sistema avisa cada aluno e cada professor fiscal sobre sala/horário.
 - `<<include>>` (Informar Disponibilidade → Realizar Alocação Automática): a alocação depende da disponibilidade informada pelos professores.
+- `<<include>>` (Registrar Presença → Lançar Nota e Aplicar Bônus): só é possível lançar a nota/bônus de um Aluno cuja presença já foi registrada pelo Professor fiscal.
 
 ---
 
@@ -332,6 +356,32 @@ end note
 	- 2b. Aluno tenta acessar ou alterar o cronograma de outro aluno (ex.: manipulando um identificador na requisição)
 		- 2b1. Sistema nega o acesso, pois o Aluno autenticado só pode alterar o próprio cronograma
 
+### Escolher Matéria para Bônus
+
+* Atores:
+	- Aluno
+	- Sistema
+
+- Pré-Condições:
+	- Aluno autenticado via "Fazer Login (E-mail Institucional)"
+	- Aluno matriculado em ao menos uma matéria no período corrente
+	- Período de escolha aberto (vinculado ao Teste de Progresso)
+
+* Fluxo Básico:
+    1. Aluno acessa a área de inscrição do Teste de Progresso
+    2. Sistema exibe as matérias em que o Aluno está matriculado no momento
+    3. Aluno seleciona uma única matéria para receber o bônus de nota
+    4. Sistema registra a escolha vinculada à matrícula do Aluno no Teste de Progresso
+    5. Sistema exibe confirmação da escolha ao Aluno
+
+- Fluxos Alternativos:
+	- 2a. Aluno não possui nenhuma matéria em curso
+		- 2a1. Sistema informa que não há matéria elegível; o Aluno ainda participa do teste, porém sem bônus vinculado
+	- 3a. Aluno deseja trocar a matéria escolhida
+		- 3a1. Sistema permite alterar a escolha enquanto o período estiver aberto
+	- 3b. Aluno tenta escolher/trocar a matéria após o prazo limite
+		- 3b1. Sistema exibe mensagem de erro e mantém a escolha anterior (ou nenhuma)
+
 ### Consultar Testes Criados
 
 * Atores:
@@ -415,6 +465,72 @@ end note
 - Fluxos Alternativos:
 	- 2a. Ajuste proposto gera novo conflito
 		- 2a1. Sistema exibe mensagem de erro e mantém a alocação anterior
+
+---
+
+## Aplicação da Prova e Resultado
+
+### Notificar Aluno e Professor (Sala/Horário)
+
+* Atores:
+	- Sistema
+
+- Pré-Condições:
+	- Alocação automática concluída sem conflitos pendentes
+
+* Fluxo Básico:
+    1. Sistema identifica, para cada Aluno alocado, o local e o horário definidos
+    2. Sistema envia notificação ao Aluno com unidade, sala e horário do teste
+    3. Sistema identifica, para cada Professor fiscal, a sala e o horário atribuídos
+    4. Sistema envia notificação ao Professor com sala e horário em que atuará como fiscal
+
+- Fluxos Alternativos:
+	- 1a. Alocação é ajustada manualmente após o envio inicial ("Ajustar Alocação Manualmente")
+		- 1a1. Sistema reenvia a notificação com os dados atualizados
+
+### Registrar Presença
+
+* Atores:
+	- Professor (atuando como fiscal)
+	- Sistema
+
+- Pré-Condições:
+	- Professor associado à sala como fiscal (via alocação)
+	- Teste de Progresso em aplicação (data/horário da sala do Professor)
+
+* Fluxo Básico:
+    1. Professor acessa a lista de alunos alocados na sua sala
+    2. Professor marca presença ou ausência de cada Aluno
+    3. Sistema registra a presença vinculada ao Aluno e ao Teste de Progresso
+
+- Fluxos Alternativos:
+	- 2a. Aluno alocado não comparece
+		- 2a1. Sistema marca ausência; nenhum bônus será aplicado à matéria escolhida por esse Aluno
+
+### Lançar Nota e Aplicar Bônus na Matéria Escolhida
+
+* Atores:
+	- Administrador
+	- Professor (atuando como fiscal)
+	- Sistema
+
+- Pré-Condições:
+	- Presença do Aluno já registrada ("Registrar Presença")
+	- Aluno com matéria de bônus escolhida ("Escolher Matéria para Bônus"), quando aplicável
+
+* Fluxo Básico:
+    1. Administrador lança ou importa a nota do Teste de Progresso de cada Aluno presente
+    2. Sistema valida a nota informada
+    3. Sistema aplica a nota como bônus na média da matéria que o Aluno escolheu
+    4. Aluno consulta o resultado e o efeito do bônus na matéria escolhida
+
+- Fluxos Alternativos:
+	- 1a. Aluno inscrito não compareceu ("Registrar Presença" marcou ausência)
+		- 1a1. Sistema não aplica bônus a nenhuma matéria para esse Aluno
+	- 2a. Nota lançada fora da faixa válida
+		- 2a1. Sistema exibe mensagem de erro e não aplica a nota
+	- 3a. Aluno não escolheu matéria de bônus
+		- 3a1. Sistema registra a nota do teste sem aplicar bônus a nenhuma matéria
 
 ---
 
