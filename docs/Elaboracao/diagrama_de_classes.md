@@ -1,5 +1,5 @@
 ---
-id: diagrama_de_cclasses
+id: diagrama_de_classes
 title: Diagrama de Classes
 ---
 
@@ -34,36 +34,80 @@ Ambos devem ser derivados de:
 
 #### 1.1 Finalidade
 
-Representar conceitos do domínio, suas responsabilidades e relacionamentos, sem detalhes de implementação.
+Representar os principais conceitos do domínio do Sistema de Gestão do Teste Progresso, suas responsabilidades e os relacionamentos existentes entre eles, sem apresentar detalhes de implementação.
+
+O modelo conceitual foi elaborado com base no Documento de Visão, Brainstorm e Casos de Uso do sistema.
 
 #### 1.2 Escopo
 
-- Entidades de negócio;
-- Objetos de valor;
-- Regras de associação e cardinalidade;
-- Generalizações relevantes.
+O Diagrama de Classes Conceitual contempla os principais conceitos de negócio identificados para o Sistema de Gestão do Teste Progresso:
+
+- Usuários;
+- Perfis;
+- Alunos;
+- Professores;
+- Coordenação;
+- Cursos;
+- Matérias;
+- Matrículas;
+- Unidades;
+- Salas;
+- Teste Progresso;
+- Inscrições;
+- Ensalamento;
+- Alocação de professores fiscais;
+- Resultados do Teste Progresso;
+- Notificações.
+
+O modelo contempla também os relacionamentos e as respectivas multiplicidades entre os conceitos.
 
 #### 1.3 Notação mínima
 
-Para cada classe conceitual:
+Para cada classe conceitual são apresentados:
 
 - **Nome**;
 - **Descrição curta**;
-- **Atributos de domínio** (sem tipos técnicos, quando possível);
-- **Relacionamentos** com multiplicidade;
-- **Restrições de negócio** (opcional).
+- **Atributos de domínio**, sem especificação de tipos técnicos;
+- **Relacionamentos** com suas respectivas multiplicidades;
+- **Restrições de negócio**, quando aplicável.
+
+Não são incluídos métodos, tipos técnicos de atributos, classes de controle, serviços, repositórios ou outros elementos relacionados à implementação do sistema.
 
 #### 1.4 Rastreabilidade
 
 | Classe Conceitual | Requisito(s) | Caso(s) de Uso | Tela/Protótipo |
 |---|---|---|---|
-| `<Classe>` | `RF-xx` | `UC-xx` | `Tela xx` |
+| Usuario | BS01, BS02, BS03 | Criação de uma conta; Entrada do usuário | Tela de criação de conta / Entrada |
+| Perfil | BS01, BS02, BS03 | Edição; Visualização | Tela de perfil |
+| Aluno | BS02, BS03, BS05, BS09 | Inscrição; Organizar alunos nas salas; Lançar nota e aplicar bônus | Área do aluno |
+| Professor | BS02, BS11, BS12 | Associar professores fiscais às salas | Área do professor |
+| Coordenacao | BS02, BS06, BS07, BS11 | Organizar alunos nas salas; Associar professores fiscais às salas | Área da coordenação |
+| Curso | BS04, BS05 | Cadastro de Curso e Matérias | Tela de cursos |
+| Materia | BS04, BS05, BS13 | Cadastro de Curso e Matérias; Inscrição | Tela de matérias / Inscrição |
+| Matricula | BS05 | Vínculo do Aluno com Curso e Matérias em curso | Tela de perfil do aluno |
+| Unidade | BS06, BS08, BS13 | Cadastro de Unidade e Salas | Tela de unidades |
+| Sala | BS07, BS08, BS09, BS10, BS12 | Organizar alunos nas salas; Associar professores fiscais às salas | Tela de salas / Ensalamento |
+| TesteProgresso | BS09, BS10, BS13 | Inscrição; Organizar alunos nas salas; Lançar nota e aplicar bônus | Tela do Teste Progresso |
+| Inscricao | BS09, BS13 | Inscrever-se no Teste Progresso e escolher matéria do bônus | Tela de inscrição |
+| Ensalamento | BS09, BS10 | Organizar alunos nas salas | Tela de ensalamento |
+| AlocacaoFiscal | BS11, BS12 | Associar professores fiscais às salas | Tela de alocação de fiscais |
+| ResultadoTeste | BS13, BS14 | Lançar nota e aplicar bônus | Tela de resultados |
+| Notificacao | BS13 | Visualização de notificações | Tela de notificações |
 
 #### 1.5 Critérios de validação
 
-- Cada classe deve ter vínculo com ao menos um requisito/caso de uso;
-- Não incluir classes técnicas (ex.: repositório, controller);
-- Terminologia alinhada ao domínio do problema.
+- Cada classe possui vínculo com pelo menos um requisito ou caso de uso;
+- As classes representam conceitos relevantes do domínio do Sistema de Gestão do Teste Progresso;
+- Não são incluídas classes técnicas, como repositórios, controllers ou serviços;
+- A terminologia utilizada está alinhada ao domínio do problema;
+- Os relacionamentos entre as classes representam as associações identificadas nos Casos de Uso;
+- As multiplicidades representam as regras de associação identificadas para o domínio;
+- O modelo é consistente com o Documento de Visão, Brainstorm e Casos de Uso;
+- O modelo não apresenta detalhes de implementação.
+
+
+
+
 
 ### 2) Transição para Diagrama de Classes de Especificação
 
