@@ -1,76 +1,105 @@
-@startuml
-
-title Diagrama de Classes - Sistema de Gerenciamento do Teste Progresso
-
+@startuml AlocacaoProvas
+!theme plain
 skinparam classAttributeIconSize 0
-skinparam monochrome true
-skinparam shadowing false
+skinparam linetype ortho
 
-package "Registro e Verificação de Usuários" {
-
-    abstract class Usuario {
-        - id: int
-        - nome: String
-        - email: String
-        - matricula: String
-    }
-
-    class Aluno
-
-    class Professor
-
-    class Coordenacao
-
-    Usuario <|-- Aluno
-    Usuario <|-- Professor
-    Usuario <|-- Coordenacao
+enum TipoUsuario {
+  ALUNO
+  FISCAL
+  ADMIN
 }
 
-package "Estrutura Acadêmica" {
-
-    class Unidade {
-        - id: int
-        - nome: String
-        - endereco: String
-    }
-
-    class Curso {
-        - id: int
-        - nome: String
-    }
-
-    class Sala {
-        - id: int
-        - numero: String
-        - capacidade: int
-    }
+enum StatusSala {
+  LIVRE
+  OCUPADA
+  MANUTENCAO
 }
 
-package "Organização da Avaliação" {
-
-    enum Funcao {
-        ALUNO
-        FISCAL
-    }
-
-    class Alocacao {
-        - id: int
-        - funcao: Funcao
-    }
+class Usuario {
+  - id : int
+  - nome : String
+  - email : String
+  - senha : String
+  - tipo : TipoUsuario
+  + cadastrar()
+  + autenticar()
 }
 
-' ============================
-' RELACIONAMENTOS
-' ============================
+class Aluno {
+  - matricula : String
+  + consultarAlocacao()
+}
 
-Unidade "1" -- "0..*" Usuario : pertence >
+class Fiscal {
+  - codigoFuncionario : String
+  + consultarSalaDesignada()
+}
 
-Curso "1" -- "0..*" Aluno : pertence >
+class Administrador {
+  + gerenciarSalas()
+  + gerenciarProvas()
+  + executarAlocacao()
+}
 
-Unidade "1" *-- "1..*" Sala : possui >
+class Curso {
+  - id : int
+  - codigo : String
+  - nome : String
+}
 
-Usuario "1" -- "0..*" Alocacao : recebe >
+class Filial {
+  - id : int
+  - nome : String
+  - endereco : String
+  + listarSalasVazias(dataHora) : List<Sala>
+}
 
-Sala "1" -- "0..*" Alocacao : recebe >
+class Sala {
+  - id : int
+  - numero : String
+  - capacidade : int
+  - status : StatusSala
+  + estaDisponivel(dataHora) : bool
+  + ocupar()
+  + liberar()
+}
+
+class Prova {
+  - id : int
+  - disciplina : String
+  - dataHora : DateTime
+  - duracaoMin : int
+}
+
+class Alocacao {
+  - id : int
+  - dataAlocacao : DateTime
+  + validarCapacidade() : bool
+  + adicionarAluno(aluno : Aluno)
+  + definirFiscal(fiscal : Fiscal)
+}
+
+class GerenciadorAlocacao {
+  + buscarSalasVazias(filial, prova) : List<Sala>
+  + alocarAlunosPorCursoEFilial(prova)
+  + alocarFiscal(sala, prova)
+}
+
+Usuario <|-- Aluno
+Usuario <|-- Fiscal
+Usuario <|-- Administrador
+
+Aluno "*" --> "1" Curso : cursa >
+Aluno "*" --> "1" Filial : pertence a >
+Fiscal "*" --> "*" Filial : atende >
+Filial "1" *-- "*" Sala : possui >
+Prova "*" --> "1" Curso : é de >
+Alocacao "1" --> "1" Prova : aplica >
+Alocacao "1" --> "1" Sala : ocorre em >
+Alocacao "1" --> "*" Aluno : aloca >
+Alocacao "1" --> "1" Fiscal : supervisionada por >
+GerenciadorAlocacao ..> Alocacao : cria >
+GerenciadorAlocacao ..> Sala : consulta >
+GerenciadorAlocacao ..> Filial : consulta >
 
 @enduml
