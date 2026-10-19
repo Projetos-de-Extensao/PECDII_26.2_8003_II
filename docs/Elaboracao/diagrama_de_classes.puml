@@ -5,7 +5,7 @@ skinparam linetype ortho
 
 enum TipoUsuario {
   ALUNO
-  FISCAL
+  PROFESSOR
   ADMIN
 }
 
@@ -15,11 +15,15 @@ enum StatusSala {
   MANUTENCAO
 }
 
+enum StatusPresenca {
+  PRESENTE
+  AUSENTE
+}
+
 class Usuario {
   - id : int
   - nome : String
-  - email : String
-  - senha : String
+  - emailInstitucional : String
   - tipo : TipoUsuario
   + cadastrar()
   + autenticar()
@@ -28,20 +32,30 @@ class Usuario {
 class Aluno {
   - matricula : String
   + consultarAlocacao()
+  + consultarResultado() : ResultadoTeste
+  + escolherMateriaBonus(materia : Materia)
 }
 
-class Fiscal {
+class Professor {
   - codigoFuncionario : String
   + consultarSalaDesignada()
+  + registrarPresenca(aluno : Aluno, status : StatusPresenca)
 }
 
 class Administrador {
   + gerenciarSalas()
   + gerenciarProvas()
   + executarAlocacao()
+  + lancarNota(aluno : Aluno, valor : float)
 }
 
 class Curso {
+  - id : int
+  - codigo : String
+  - nome : String
+}
+
+class Materia {
   - id : int
   - codigo : String
   - nome : String
@@ -69,6 +83,7 @@ class Prova {
   - disciplina : String
   - dataHora : DateTime
   - duracaoMin : int
+  - notaMaxima : float
 }
 
 class Alocacao {
@@ -76,30 +91,65 @@ class Alocacao {
   - dataAlocacao : DateTime
   + validarCapacidade() : bool
   + adicionarAluno(aluno : Aluno)
-  + definirFiscal(fiscal : Fiscal)
+  + definirProfessor(professor : Professor)
 }
 
 class GerenciadorAlocacao {
   + buscarSalasVazias(filial, prova) : List<Sala>
   + alocarAlunosPorCursoEFilial(prova)
-  + alocarFiscal(sala, prova)
+  + alocarProfessor(sala, prova)
+}
+
+' --- Adendo: gerenciamento e atribuição de notas ---
+
+class Presenca {
+  - id : int
+  - status : StatusPresenca
+  - dataRegistro : DateTime
+}
+
+class ResultadoTeste {
+  - id : int
+  - nota : float
+  - bonusAplicado : float
+  - dataLancamento : DateTime
+  + validarNota() : bool
+}
+
+class GerenciadorNotas {
+  + lancarNota(aluno : Aluno, prova : Prova, valor : float) : ResultadoTeste
+  + importarNotas(prova : Prova, arquivo)
+  + aplicarBonus(resultado : ResultadoTeste)
+  + exigirPresenca(aluno : Aluno, prova : Prova) : bool
 }
 
 Usuario <|-- Aluno
-Usuario <|-- Fiscal
+Usuario <|-- Professor
 Usuario <|-- Administrador
 
 Aluno "*" --> "1" Curso : cursa >
 Aluno "*" --> "1" Filial : pertence a >
-Fiscal "*" --> "*" Filial : atende >
+Aluno "*" --> "*" Materia : matriculado em >
+Aluno "*" --> "0..1" Materia : bônus em >
+Professor "*" --> "*" Filial : atende >
 Filial "1" *-- "*" Sala : possui >
+Curso "1" o-- "*" Materia : possui >
 Prova "*" --> "1" Curso : é de >
 Alocacao "1" --> "1" Prova : aplica >
 Alocacao "1" --> "1" Sala : ocorre em >
 Alocacao "1" --> "*" Aluno : aloca >
-Alocacao "1" --> "1" Fiscal : supervisionada por >
+Alocacao "1" --> "1" Professor : supervisionada por >
 GerenciadorAlocacao ..> Alocacao : cria >
 GerenciadorAlocacao ..> Sala : consulta >
 GerenciadorAlocacao ..> Filial : consulta >
+
+Presenca "*" --> "1" Aluno : de >
+Presenca "*" --> "1" Prova : em >
+Presenca "*" --> "1" Professor : registrada por >
+ResultadoTeste "*" --> "1" Aluno : pertence a >
+ResultadoTeste "*" --> "1" Prova : referente a >
+ResultadoTeste "*" --> "0..1" Materia : bônus aplicado em >
+GerenciadorNotas ..> ResultadoTeste : cria >
+GerenciadorNotas ..> Presenca : consulta >
 
 @enduml

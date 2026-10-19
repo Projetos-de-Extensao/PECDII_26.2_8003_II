@@ -27,6 +27,20 @@ title: Design Thinking
 #### **3.1. Empatia**
 
 - **Pesquisa**: A pesquisa inicial foi realizada a partir da análise do funcionamento do Teste de Progresso, da necessidade de organização dos recursos envolvidos e da análise de sistemas e aplicações relacionadas a avaliações e gestão acadêmica. Foi levado em consideração, para essa primeira parte de desenvolvimento do projeto, apenas o Ibmec Rio de Janeiro
+- **Análise de sistemas similares**: foram estudados sistemas e aplicativos com função parecida com a nossa (alocação de alunos em salas para provas, escala de fiscais e agendamento de exames). Detalhes completos na [Pesquisa](pesquisa.md).
+
+| Sistema | O que faz | O que podemos aproveitar | Diferença para o nosso |
+|---|---|---|---|
+| [Cal-CS-61A-Staff/seating](https://github.com/Cal-CS-61A-Staff/seating) (GitHub) | App Flask em que o admin escolhe as salas e atribui assentos; o aluno faz login e consulta o seu | Consulta do aluno por login, vendo só o que é dele | Atrelado ao login de uma disciplina; não trata fiscais nem várias unidades |
+| [Exam-Scheduling-Management-System](https://github.com/dharun-narayanan/Exam-Scheduling-Management-System_Web-App) (GitHub) | Aloca sala e horário e também os professores fiscais; o professor confirma sua disponibilidade | Disponibilidade do professor e alocação de fiscais (o mais próximo do nosso) | Não prevê cronograma alterável pelo aluno nem bônus de nota |
+| [ExamHall-SeatAllocator](https://github.com/Govind-S-B/ExamHall-SeatAllocator/blob/main/README.md) (GitHub) | Distribui alunos por matéria/turma, evita mesma matéria lado a lado e gera PDFs | Geração de listas em PDF para impressão | App desktop; sem fiscais e sem consulta pelo aluno |
+| [Exam-Seat-Arrangement](https://github.com/afreenpoly/Exam-Seat-Arrangement) (GitHub) | Web app Python/MongoDB; importa horários e dados dos alunos e distribui os assentos | Importação de planilhas de alunos | Foco só em assentos |
+| [UniTime](https://www.apereo.org/programs/software/unitime) (Apereo, código aberto) | Módulo de exames modelado como problema de restrições e otimização, com compartilhamento de salas com outros eventos | Tratar a alocação como problema de restrições e detectar conflitos | Sistema genérico e pesado; não é integrado ao login e às regras do Ibmec |
+| [SALAS](https://repositorio.ufc.br/handle/riufc/68392) (UFC) | Distribui turmas em salas por capacidade, horário, acessibilidade e recursos | Considerar acessibilidade do aluno e recursos da sala | Aloca aulas, não provas |
+| Portal do Teste de Progresso do Ibmec, Moodle e Flexge | Aplicação e resultados do teste (ver Pesquisa) | Dashboard e consulta de resultados | Não organizam salas e fiscais |
+
+  Conclusão: na busca feita não encontramos sistema voltado à alocação de fiscais de provas presenciais em universidades brasileiras. Os que existem tratam só de assentos ou de aulas. O diferencial do nosso projeto é unir salas, fiscais, cronograma individual do aluno e notas/bônus em um só sistema.
+
 - **Insights**: É necessário organizar os professores que farão o papel de fiscais em cada sala, a quantidade de alunos por sala, além de garantir que os alunos respeitarão o horário da realização da prova.
 - **Personas**: Coordenador e Secretaria, Professor e Aluno. 
 Sendo as necessidades do coordenador e secretaria organizar os recursos disponíveis (fiscais & salas). As necessidades do professor consultar sua sala e horário de aplicação do teste, e por fim, as necessidades principais do aluno são visualizar local e horário da prova e futuramente consultar sua nota.

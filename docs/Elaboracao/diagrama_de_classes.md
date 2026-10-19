@@ -105,7 +105,75 @@ Não são incluídos métodos, tipos técnicos de atributos, classes de controle
 - O modelo é consistente com o Documento de Visão, Brainstorm e Casos de Uso;
 - O modelo não apresenta detalhes de implementação.
 
+#### 1.6 Adendo — Gerenciamento e atribuição de notas
 
+Para que o sistema gerencie e atribua as notas do Teste Progresso (e o bônus na matéria escolhida pelo aluno), o diagrama ganhou as classes abaixo. A classe que antes se chamava `Fiscal` passou a se chamar `Professor`, pois o fiscal é um professor atuando em uma sala.
+
+| Classe | Responsabilidade | Casos de uso relacionados |
+|---|---|---|
+| `Presenca` | Registra presença/ausência do aluno na prova (feita pelo `Professor` fiscal da sala) | Registrar Presença |
+| `ResultadoTeste` | Guarda a nota do aluno na prova, o bônus aplicado e a matéria beneficiada | Lançar Nota e Aplicar Bônus |
+| `GerenciadorNotas` | Lança/importa notas, valida a faixa da nota, aplica o bônus e exige presença registrada | Lançar Nota e Aplicar Bônus |
+| `Materia` | Matéria em curso do aluno; uma delas é escolhida para receber o bônus | Escolher Matéria para Bônus |
+
+Regras de negócio refletidas no modelo:
+
+- Só é possível lançar nota/bônus para aluno com `Presenca` = `PRESENTE`;
+- Cada aluno escolhe no máximo uma matéria de bônus (`0..1`);
+- A nota deve estar dentro da faixa válida (`Prova.notaMaxima`), caso contrário não é aplicada;
+- O aluno só consulta o próprio `ResultadoTeste`;
+- O `Usuario` não armazena senha: a autenticação é feita pelo e-mail institucional, via Sistema Acadêmico da Faculdade.
+
+```puml
+@startuml AdendoNotas
+
+skinparam classAttributeIconSize 0
+
+enum StatusPresenca {
+  PRESENTE
+  AUSENTE
+}
+
+class Aluno
+class Professor
+class Administrador
+class Prova
+class Materia
+
+class Presenca {
+  - status : StatusPresenca
+  - dataRegistro : DateTime
+}
+
+class ResultadoTeste {
+  - nota : float
+  - bonusAplicado : float
+  - dataLancamento : DateTime
+  + validarNota() : bool
+}
+
+class GerenciadorNotas {
+  + lancarNota(aluno, prova, valor) : ResultadoTeste
+  + importarNotas(prova, arquivo)
+  + aplicarBonus(resultado)
+  + exigirPresenca(aluno, prova) : bool
+}
+
+Presenca "*" --> "1" Aluno : de >
+Presenca "*" --> "1" Prova : em >
+Presenca "*" --> "1" Professor : registrada por >
+ResultadoTeste "*" --> "1" Aluno : pertence a >
+ResultadoTeste "*" --> "1" Prova : referente a >
+ResultadoTeste "*" --> "0..1" Materia : bônus aplicado em >
+Aluno "*" --> "0..1" Materia : bônus em >
+GerenciadorNotas ..> ResultadoTeste : cria >
+GerenciadorNotas ..> Presenca : consulta >
+Administrador ..> GerenciadorNotas : lança nota >
+
+@enduml
+```
+
+O diagrama completo, com o adendo integrado, está em [diagrama_de_classes.puml](diagrama_de_classes.puml).
 
 
 

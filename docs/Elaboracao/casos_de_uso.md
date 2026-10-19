@@ -37,6 +37,7 @@ title: Diagrama de Casos de Uso
 	- Notificação de sala/horário (Aluno e Professor fiscal)
 	- Registro de presença
 	- Lançamento de nota e aplicação do bônus na matéria escolhida
+- Requisitos de Segurança (RS01 a RS12)
 
 ### Atores
 
@@ -565,3 +566,22 @@ end note
 - Fluxos Alternativos:
 	- 2a. Existem conflitos não resolvidos
 		- 2a1. Sistema destaca o número de conflitos em alerta
+
+---
+
+## Requisitos de Segurança
+
+| ID | Requisito | Casos de uso relacionados |
+|---|---|---|
+| RS01 | **Autenticação institucional**: todo acesso exige login com o e-mail/conta da faculdade, validado pelo Sistema Acadêmico (SSO). O sistema não armazena senhas. | Fazer Login |
+| RS02 | **Controle de acesso por perfil**: Administrador, Professor e Aluno só acessam as funções do próprio perfil (ex.: só o Administrador cadastra recursos, cria o teste, roda a alocação e lança notas). | Todos |
+| RS03 | **Aluno só acessa o que é seu**: a verificação é feita no servidor (não apenas na interface), impedindo que um aluno veja ou altere o cronograma, a matéria de bônus ou a nota de outro aluno. | Confirmar/Alterar Cronograma, Escolher Matéria para Bônus |
+| RS04 | **Professor só atua nas suas salas**: o Professor fiscal só consulta a lista e registra presença das salas às quais foi alocado. | Registrar Presença, Gerar Lista de Salas/Alunos |
+| RS05 | **Comunicação protegida**: todo tráfego entre navegador, sistema e Sistema Acadêmico usa HTTPS/TLS. | Todos |
+| RS06 | **Sessão segura**: a sessão expira por inatividade, há logout explícito e o identificador de sessão não trafega na URL. | Fazer Login |
+| RS07 | **Integridade das notas**: a nota só é aceita se estiver na faixa válida e se houver presença registrada; o aluno nunca altera a própria nota; qualquer correção é feita só pelo Professor. | Lançar Nota e Aplicar Bônus |
+| RS08 | **Auditoria**: alterações de cronograma, ajustes manuais de alocação, registros de presença, lançamentos de nota e aplicações de bônus registram quem fez, quando e o valor anterior/novo. | Alterar Cronograma, Ajustar Alocação, Registrar Presença, Lançar Nota |
+| RS09 | **Proteção de dados pessoais (LGPD)**: armazenar apenas os dados necessários (nome, matrícula, curso, e-mail institucional, matérias em curso e resultados) e restringir a consulta ao perfil autorizado. | Cadastros, Gerar Lista, Dashboard |
+| RS10 | **Validação de entrada**: todo dado recebido é validado no servidor, com proteção contra injeção de SQL, XSS e CSRF. | Todos que recebem dados |
+| RS11 | **Falha segura**: se o Sistema Acadêmico estiver indisponível, o acesso é negado (nunca liberado por padrão) e o usuário pode tentar novamente. | Fazer Login |
+| RS12 | **Disponibilidade e recuperação**: backup periódico do banco de dados, para não perder cadastros, alocações e notas. | Todos |
