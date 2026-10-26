@@ -9,3 +9,11 @@ class Produto(models.Model):
     def __str__(self):
         return self.nome
 
+class Sala(models.Model):
+    unidade = models.CharField(max_length=100)
+    nome = models.CharField(max_length=50)
+    capacidade = models.IntegerField()
+    ativa = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f"{self.nome} - {self.unidade}"
