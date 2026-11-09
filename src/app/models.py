@@ -4,6 +4,10 @@ from django.contrib.auth.models import User
 
 from django.core.exceptions import ValidationError
 
+from django.core.validators import MinValueValidator
+
+from django.utils import timezone
+
 
 class Unidade(models.Model):
     nome = models.CharField(max_length=100, unique=True)
@@ -30,22 +34,22 @@ class AlocacaoSala(models.Model):
         ('N', 'Noite'),
     ]
 
-    aluno = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
+    inscricao = models.ForeignKey('Inscricao', on_delete=models.CASCADE, null=True, blank=True)
     turma = models.ForeignKey('Turma', on_delete=models.CASCADE, null=True, blank=True)
     sala = models.ForeignKey(Sala, on_delete=models.CASCADE)
     data_aplicacao = models.DateField()
     turno = models.CharField(max_length=1, choices=TURNOS)
 
     def alunos_ids(self):
-        if self.aluno_id:
-            return {self.aluno_id}
+        if self.inscricao_id:
+            return {self.inscricao.aluno.perfil.user_id}
         if self.turma_id:
             return set(self.turma.alunos.values_list('id', flat=True))
         return set()
 
     def clean(self):
-        if bool(self.aluno_id) == bool(self.turma_id):
-            raise ValidationError("Informe um aluno ou uma turma (apenas um dos dois).")
+        if bool(self.inscricao_id) == bool(self.turma_id):
+            raise ValidationError("Informe uma inscrição ou uma turma (apenas um dos dois).")
 
         if not self.sala_id or not self.data_aplicacao or not self.turno:
             return
@@ -58,18 +62,18 @@ class AlocacaoSala(models.Model):
 
         ocupadas = sum(len(a.alunos_ids()) for a in mesmo_horario.filter(sala=self.sala))
         if ocupadas + len(alunos) > self.sala.capacidade:
-            if self.aluno_id:
+            if self.inscricao_id:
                 raise ValidationError("Esta sala já está cheia nesse dia e turno.")
             raise ValidationError("Esta sala não comporta todos os alunos da turma nesse dia e turno.")
 
         for outra in mesmo_horario:
             if alunos & outra.alunos_ids():
-                if self.aluno_id:
+                if self.inscricao_id:
                     raise ValidationError("Este aluno já tem uma sala nesse dia e turno.")
                 raise ValidationError("Algum aluno desta turma já tem uma sala nesse dia e turno.")
 
     def __str__(self):
-        return f"{self.aluno or self.turma} - {self.sala} ({self.data_aplicacao})"
+        return f"{self.inscricao or self.turma} - {self.sala} ({self.data_aplicacao})"
 
 
 class Curso(models.Model):
@@ -141,3 +145,78 @@ class Professor(models.Model):
 
     def __str__(self):
         return f"{self.perfil.user.username} ({self.get_titulacao_display()})"
+
+
+class TesteProgresso(models.Model):
+    STATUS = [
+        ('P', 'Planejado'),
+        ('A', 'Inscrições abertas'),
+        ('F', 'Finalizado'),
+        ('C', 'Cancelado'),
+    ]
+
+    data = models.DateField()
+    descricao = models.TextField(blank=True)
+    status = models.CharField(max_length=1, choices=STATUS, default='P')
+
+    class Meta:
+        verbose_name_plural = "Testes de Progresso"
+
+    @classmethod
+    def finalizar_vencidos(cls):
+        return cls.objects.filter(
+            status__in=['P', 'A'], data__lt=timezone.localdate(),
+        ).update(status='F')
+
+    def atualizar_status(self):
+        if self.status in ('P', 'A') and self.data < timezone.localdate():
+            self.status = 'F'
+            self.save(update_fields=['status'])
+
+    def __str__(self):
+        return f"Teste de Progresso {self.data}"
+
+
+class Inscricao(models.Model):
+    teste = models.ForeignKey(TesteProgresso, on_delete=models.CASCADE, related_name='inscricoes')
+    aluno = models.ForeignKey(Aluno, on_delete=models.CASCADE, related_name='inscricoes')
+
+    class Meta:
+        verbose_name = "Inscrição"
+        verbose_name_plural = "Inscrições"
+        constraints = [
+            models.UniqueConstraint(fields=['teste', 'aluno'], name='inscricao_unica_por_teste'),
+        ]
+
+    def clean(self):
+        if not self.teste_id:
+            return
+
+        self.teste.atualizar_status()
+        inalterada = self.pk and Inscricao.objects.filter(pk=self.pk, teste_id=self.teste_id).exists()
+        if not inalterada and self.teste.status != 'A':
+            raise ValidationError("Este teste não está com as inscrições abertas.")
+
+    def __str__(self):
+        return f"{self.aluno} - {self.teste}"
+
+
+class ResultadoTesteProgresso(models.Model):
+    inscricao = models.OneToOneField(Inscricao, on_delete=models.CASCADE, related_name='resultado')
+    nota = models.DecimalField(max_digits=5, decimal_places=2, validators=[MinValueValidator(0)])
+
+    class Meta:
+        verbose_name = "Resultado do Teste de Progresso"
+        verbose_name_plural = "Resultados do Teste de Progresso"
+
+    def clean(self):
+        if not self.inscricao_id:
+            return
+
+        teste = self.inscricao.teste
+        teste.atualizar_status()
+        if teste.status != 'F':
+            raise ValidationError("O resultado só pode ser lançado depois que o teste for finalizado.")
+
+    def __str__(self):
+        return f"{self.inscricao}: {self.nota}"

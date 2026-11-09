@@ -1,7 +1,10 @@
 # app/serializers.py
 from rest_framework import serializers
 from django.core.exceptions import ValidationError as DjangoValidationError
-from .models import Sala, AlocacaoSala, Curso, Turma
+from .models import (
+    Sala, AlocacaoSala, Curso, Turma, Perfil, Aluno, Professor,
+    TesteProgresso, Inscricao, ResultadoTesteProgresso,
+)
 
 
 class SalaSerializer(serializers.ModelSerializer):
@@ -13,7 +16,7 @@ class SalaSerializer(serializers.ModelSerializer):
 class AlocacaoSalaSerializer(serializers.ModelSerializer):
     class Meta:
         model = AlocacaoSala
-        fields = ['id', 'aluno', 'turma', 'sala', 'data_aplicacao', 'turno']
+        fields = ['id', 'inscricao', 'turma', 'sala', 'data_aplicacao', 'turno']
 
     def validate(self, dados):
         # reaproveita as regras que já escrevemos no clean() do model
@@ -58,3 +61,51 @@ class ProfessorSerializer(serializers.ModelSerializer):
     class Meta:
         model = Professor
         fields = '__all__'
+
+
+class TesteProgressoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TesteProgresso
+        fields = ['id', 'data', 'descricao', 'status']
+
+
+class InscricaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Inscricao
+        fields = ['id', 'teste', 'aluno']
+
+    def validate(self, dados):
+        # reaproveita a regra do clean() do model
+        if self.instance:
+            atuais = {c: getattr(self.instance, c) for c in self.Meta.fields if c != 'id'}
+            atuais.update(dados)
+            dados = atuais
+        inscricao = Inscricao(**dados)
+        if self.instance:
+            inscricao.pk = self.instance.pk
+        try:
+            inscricao.clean()
+        except DjangoValidationError as erro:
+            raise serializers.ValidationError(erro.messages)
+        return dados
+
+
+class ResultadoTesteProgressoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResultadoTesteProgresso
+        fields = ['id', 'inscricao', 'nota']
+
+    def validate(self, dados):
+        # reaproveita a regra do clean() do model
+        if self.instance:
+            atuais = {c: getattr(self.instance, c) for c in self.Meta.fields if c != 'id'}
+            atuais.update(dados)
+            dados = atuais
+        resultado = ResultadoTesteProgresso(**dados)
+        if self.instance:
+            resultado.pk = self.instance.pk
+        try:
+            resultado.clean()
+        except DjangoValidationError as erro:
+            raise serializers.ValidationError(erro.messages)
+        return dados
