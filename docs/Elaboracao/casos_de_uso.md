@@ -585,3 +585,28 @@ end note
 | RS10 | **Validação de entrada**: todo dado recebido é validado no servidor, com proteção contra injeção de SQL, XSS e CSRF. | Todos que recebem dados |
 | RS11 | **Falha segura**: se o Sistema Acadêmico estiver indisponível, o acesso é negado (nunca liberado por padrão) e o usuário pode tentar novamente. | Fazer Login |
 | RS12 | **Disponibilidade e recuperação**: backup periódico do banco de dados, para não perder cadastros, alocações e notas. | Todos |
+
+---
+
+## Estrutura Acadêmica (implementação)
+
+| Classe | Atributos | Relacionamentos |
+|--------|-----------|-----------------|
+| `Unidade` | nome (único), endereço | 1 Unidade possui N Salas e N Cursos |
+| `Materia` | nome (único por curso) | pertence a 1 Curso; pode estar em N Turmas e N Matrículas |
+| `Matricula` | número (12 dígitos, único) | liga 1 Aluno a 1 Curso e às Matérias em que está matriculado |
+| `Sala` | nome, capacidade, ativa | pertence a 1 Unidade (chave estrangeira) |
+| `Turma` | número | pertence a 1 Curso; tem 0..1 Matéria (do mesmo curso) |
+
+### Rastreabilidade
+
+| Classe | Requisito(s) | Caso(s) de Uso |
+|--------|--------------|----------------|
+| Unidade | BS06, BS08, BS13 | Cadastro de Unidade e Salas |
+| Materia | BS04, BS05, BS13 | Cadastro de Curso e Matérias; Inscrição |
+| Matricula | BS05 | Vínculo do Aluno com Curso e Matérias em curso |
+
+- **Versão**: v0.2
+- **Data**: 09/11/2026
+- **Autor(es)**: (coloque os nomes)
+- **Resumo da alteração**: inclusão de Unidade, Materia e Matricula; Sala.unidade e Turma.materia passaram a ser chaves estrangeiras.
