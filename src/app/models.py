@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from django.core.exceptions import ValidationError
 
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 
 from django.utils import timezone
 
@@ -113,7 +113,11 @@ class Perfil(models.Model):
 
 class Aluno(models.Model):
     perfil = models.OneToOneField(Perfil, on_delete=models.CASCADE)
-    numero_matricula = models.CharField(max_length=20, unique=True)
+    numero_matricula = models.CharField(
+        max_length=12,
+        unique=True,
+        validators=[RegexValidator(r'^\d{12}$', 'A matrícula deve ter exatamente 12 dígitos numéricos.')],
+    )
     curso = models.ForeignKey('Curso', on_delete=models.PROTECT)
     periodo = models.IntegerField(default=1)
 
