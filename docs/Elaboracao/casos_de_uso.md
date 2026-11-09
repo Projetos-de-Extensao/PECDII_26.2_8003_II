@@ -608,5 +608,5 @@ end note
 
 - **Versão**: v0.2
 - **Data**: 09/11/2026
-- **Autor(es)**: (coloque os nomes)
+- **Autor(es)**: Lucas
 - **Resumo da alteração**: inclusão de Unidade, Materia e Matricula; Sala.unidade e Turma.materia passaram a ser chaves estrangeiras.
