@@ -25,3 +25,9 @@ class TesteProgressoAdmin(admin.ModelAdmin):
 
 admin.site.register(Inscricao)
 admin.site.register(ResultadoTesteProgresso)
+
+
+from .models import Materia, Matricula
+
+admin.site.register(Materia)
+admin.site.register(Matricula)

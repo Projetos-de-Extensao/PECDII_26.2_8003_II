@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from django.core.exceptions import ValidationError
 
-from django.core.validators import MinValueValidator
+from django.core.validators import MinValueValidator, RegexValidator
 
 from django.utils import timezone
 
@@ -87,29 +87,16 @@ class Curso(models.Model):
 
 class Turma(models.Model):
     numero = models.IntegerField()
-    materia = models.CharField(max_length=100, blank=True)
+    materia = models.ForeignKey('Materia', on_delete=models.PROTECT, null=True, blank=True, related_name='turmas')
     curso = models.ForeignKey(Curso, on_delete=models.CASCADE, related_name='turmas')
     alunos = models.ManyToManyField(User, related_name='turmas', blank=True)
 
+    def clean(self):
+        if self.materia_id and self.curso_id and self.materia.curso_id != self.curso_id:
+            raise ValidationError("A matéria precisa pertencer ao mesmo curso da turma.")
+
     def __str__(self):
         return f"Turma {self.numero} - {self.curso}"
-
-class Perfil(models.Model):
-    TIPOS = [
-        ('A', 'Aluno'),
-        ('P', 'Professor'),
-        ('C', 'Coordenação'),
-    ]
-
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
-    tipo = models.CharField(max_length=1, choices=TIPOS)
-    telefone = models.CharField(max_length=20, blank=True)
-
-    class Meta:
-        verbose_name_plural = "Perfis"
-
-    def __str__(self):
-        return f"{self.user.username} ({self.get_tipo_display()})"
 
 class Aluno(models.Model):
     perfil = models.OneToOneField(Perfil, on_delete=models.CASCADE)
@@ -220,3 +207,35 @@ class ResultadoTesteProgresso(models.Model):
 
     def __str__(self):
         return f"{self.inscricao}: {self.nota}"
+
+
+
+class Materia(models.Model):
+    nome = models.CharField(max_length=100)
+    curso = models.ForeignKey('Curso', on_delete=models.CASCADE, related_name='materias')
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=['curso', 'nome'], name='materia_unica_por_curso'),
+        ]
+
+    def __str__(self):
+        return f"{self.nome} ({self.curso})"
+
+
+class Matricula(models.Model):
+    numero = models.CharField(
+        max_length=12,
+        unique=True,
+        validators=[RegexValidator(r'^\d{12}$', 'A matrícula deve ter exatamente 12 dígitos numéricos.')],
+    )
+    aluno = models.OneToOneField('Aluno', on_delete=models.CASCADE, related_name='matricula')
+    curso = models.ForeignKey('Curso', on_delete=models.PROTECT, related_name='matriculas')
+    materias = models.ManyToManyField('Materia', blank=True, related_name='matriculas')
+
+    def clean(self):
+        if self.aluno_id and self.curso_id and self.aluno.curso_id != self.curso_id:
+            raise ValidationError("O curso da matrícula deve ser o mesmo curso do aluno.")
+
+    def __str__(self):
+        return f"{self.numero} - {self.aluno}"
