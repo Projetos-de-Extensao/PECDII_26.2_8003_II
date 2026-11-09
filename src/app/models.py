@@ -89,3 +89,55 @@ class Turma(models.Model):
 
     def __str__(self):
         return f"Turma {self.numero} - {self.curso}"
+
+class Perfil(models.Model):
+    TIPOS = [
+        ('A', 'Aluno'),
+        ('P', 'Professor'),
+        ('C', 'Coordenação'),
+    ]
+
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    tipo = models.CharField(max_length=1, choices=TIPOS)
+    telefone = models.CharField(max_length=20, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Perfis"
+
+    def __str__(self):
+        return f"{self.user.username} ({self.get_tipo_display()})"
+
+class Aluno(models.Model):
+    perfil = models.OneToOneField(Perfil, on_delete=models.CASCADE)
+    numero_matricula = models.CharField(max_length=20, unique=True)
+    curso = models.ForeignKey('Curso', on_delete=models.PROTECT)
+    periodo = models.IntegerField(default=1)
+
+    def clean(self):
+        if self.perfil_id and self.perfil.tipo != 'A':
+            raise ValidationError("O perfil escolhido não é do tipo Aluno.")
+
+    def __str__(self):
+        return f"{self.perfil.user.username} - {self.numero_matricula}"
+
+class Professor(models.Model):
+    TITULACOES = [
+        ('G', 'Graduação'),
+        ('E', 'Especialização'),
+        ('M', 'Mestrado'),
+        ('D', 'Doutorado'),
+    ]
+
+    perfil = models.OneToOneField(Perfil, on_delete=models.CASCADE)
+    titulacao = models.CharField(max_length=1, choices=TITULACOES)
+    area_atuacao = models.CharField(max_length=100, blank=True)
+
+    class Meta:
+        verbose_name_plural = "Professores"
+
+    def clean(self):
+        if self.perfil_id and self.perfil.tipo != 'P':
+            raise ValidationError("O perfil escolhido não é do tipo Professor.")
+
+    def __str__(self):
+        return f"{self.perfil.user.username} ({self.get_titulacao_display()})"
