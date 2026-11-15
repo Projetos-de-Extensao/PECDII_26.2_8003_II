@@ -3,7 +3,8 @@ from rest_framework import serializers
 from django.core.exceptions import ValidationError as DjangoValidationError
 from .models import (
     Sala, AlocacaoSala, Curso, Turma, Perfil, Aluno, Professor,
-    TesteProgresso, Inscricao, ResultadoTesteProgresso,
+    TesteProgresso, Inscricao, ResultadoTesteProgresso, AlocacaoFiscal,
+    Notificacao
 )
 
 
@@ -109,3 +110,14 @@ class ResultadoTesteProgressoSerializer(serializers.ModelSerializer):
         except DjangoValidationError as erro:
             raise serializers.ValidationError(erro.messages)
         return dados
+
+class AlocacaoFiscalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AlocacaoFiscal
+        fields = '__all__'
+
+
+class NotificacaoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Notificacao
+        fields = '__all__'

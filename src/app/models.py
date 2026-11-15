@@ -220,3 +220,52 @@ class ResultadoTesteProgresso(models.Model):
 
     def __str__(self):
         return f"{self.inscricao}: {self.nota}"
+
+class AlocacaoFiscal(models.Model):
+    TURNOS = [
+        ('M', 'Manhã'),
+        ('T', 'Tarde'),
+        ('N', 'Noite'),
+    ]
+
+    professor = models.ForeignKey('Professor', on_delete=models.CASCADE)
+    sala = models.ForeignKey('Sala', on_delete=models.CASCADE)
+    data_aplicacao = models.DateField()
+    turno = models.CharField(max_length=1, choices=TURNOS)
+
+    class Meta:
+        verbose_name_plural = "Alocações de fiscais"
+
+    def clean(self):
+        if not self.professor_id or not self.data_aplicacao or not self.turno:
+            return
+
+        repetido = AlocacaoFiscal.objects.filter(
+            professor=self.professor,
+            data_aplicacao=self.data_aplicacao,
+            turno=self.turno,
+        ).exclude(pk=self.pk).exists()
+
+        if repetido:
+            raise ValidationError(
+                "Este professor já é fiscal em outra sala nesse dia e turno."
+            )
+
+    def __str__(self):
+        return f"{self.professor} - {self.sala} ({self.data_aplicacao}, {self.get_turno_display()})"
+
+class Notificacao(models.Model):
+    destinatario = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='notificacoes'
+    )
+    titulo = models.CharField(max_length=100)
+    mensagem = models.TextField()
+    criada_em = models.DateTimeField(auto_now_add=True)
+    lida = models.BooleanField(default=False)
+
+    class Meta:
+        verbose_name_plural = "Notificações"
+        ordering = ['-criada_em']
+
+    def __str__(self):
+        return f"{self.titulo} - {self.destinatario.username}"
