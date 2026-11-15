@@ -1,12 +1,15 @@
 from rest_framework import viewsets
 from .models import (
     Sala, AlocacaoSala, Curso, Turma, Perfil, Aluno, Professor,
-    TesteProgresso, Inscricao, ResultadoTesteProgresso,
+    TesteProgresso, Inscricao, ResultadoTesteProgresso, AlocacaoFiscal,
+    Notificacao
 )
+
 from .serializers import (
     SalaSerializer, AlocacaoSalaSerializer, CursoSerializer, TurmaSerializer,
     PerfilSerializer, AlunoSerializer, ProfessorSerializer,
     TesteProgressoSerializer, InscricaoSerializer, ResultadoTesteProgressoSerializer,
+    AlocacaoFiscalSerializer, NotificacaoSerializer
 )
 
 
@@ -61,3 +64,12 @@ class InscricaoViewSet(viewsets.ModelViewSet):
 class ResultadoTesteProgressoViewSet(viewsets.ModelViewSet):
     queryset = ResultadoTesteProgresso.objects.all()
     serializer_class = ResultadoTesteProgressoSerializer
+
+class AlocacaoFiscalViewSet(viewsets.ModelViewSet):
+    queryset = AlocacaoFiscal.objects.all()
+    serializer_class = AlocacaoFiscalSerializer
+
+
+class NotificacaoViewSet(viewsets.ModelViewSet):
+    queryset = Notificacao.objects.all()
+    serializer_class = NotificacaoSerializer
