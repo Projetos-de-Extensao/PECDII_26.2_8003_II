@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from django.db.models import Q
+from django.db.models import Count, Q
 
 from .models import (
     Unidade, Sala, AlocacaoSala, Curso, Turma, Perfil, Aluno, Professor,
@@ -78,19 +78,41 @@ class UnidadeAdmin(admin.ModelAdmin):
 
 @admin.register(Sala)
 class SalaAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'unidade', 'capacidade', 'ativa')
+    list_display = ('nome', 'unidade', 'capacidade', 'qtd_alocacoes', 'ativa')
     list_filter = ('unidade', 'ativa')
     search_fields = ('nome', 'unidade__nome')
     autocomplete_fields = ['unidade']
+    list_select_related = ('unidade',)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(_alocacoes=Count('alocacaosala', distinct=True))
+
+    @admin.display(description='Alocações', ordering='_alocacoes')
+    def qtd_alocacoes(self, obj):
+        return obj._alocacoes
 
 
 @admin.register(Curso)
 class CursoAdmin(admin.ModelAdmin):
-    list_display = ('nome', 'unidade')
+    list_display = ('nome', 'unidade', 'qtd_turmas', 'qtd_alunos')
     list_filter = ('unidade',)
     search_fields = ('nome',)
     autocomplete_fields = ['unidade', 'alunos']
     inlines = [TurmaInline]
+    list_select_related = ('unidade',)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(
+            _turmas=Count('turmas', distinct=True), _alunos=Count('alunos', distinct=True),
+        )
+
+    @admin.display(description='Turmas', ordering='_turmas')
+    def qtd_turmas(self, obj):
+        return obj._turmas
+
+    @admin.display(description='Alunos', ordering='_alunos')
+    def qtd_alunos(self, obj):
+        return obj._alunos
 
 
 @admin.register(Perfil)
@@ -106,10 +128,18 @@ class PerfilAdmin(admin.ModelAdmin):
 
 @admin.register(Turma)
 class TurmaAdmin(admin.ModelAdmin):
-    list_display = ('numero', 'materia', 'curso')
+    list_display = ('numero', 'materia', 'curso', 'qtd_alunos')
     list_filter = ('curso',)
     search_fields = ('numero', 'materia', 'curso__nome')
     autocomplete_fields = ['curso', 'alunos']
+    list_select_related = ('curso',)
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(_alunos=Count('alunos', distinct=True))
+
+    @admin.display(description='Alunos', ordering='_alunos')
+    def qtd_alunos(self, obj):
+        return obj._alunos
 
 
 @admin.register(Aluno)
@@ -138,7 +168,7 @@ class ProfessorAdmin(admin.ModelAdmin):
 
 @admin.register(TesteProgresso)
 class TesteProgressoAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'data', 'status')
+    list_display = ('__str__', 'data', 'status', 'qtd_inscritos')
     list_filter = ('status',)
     search_fields = ('descricao',)
     date_hierarchy = 'data'
@@ -146,7 +176,11 @@ class TesteProgressoAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         TesteProgresso.finalizar_vencidos()
-        return super().get_queryset(request)
+        return super().get_queryset(request).annotate(_inscritos=Count('inscricoes', distinct=True))
+
+    @admin.display(description='Inscritos', ordering='_inscritos')
+    def qtd_inscritos(self, obj):
+        return obj._inscritos
 
 
 @admin.register(Inscricao)
@@ -159,6 +193,7 @@ class InscricaoAdmin(admin.ModelAdmin):
     )
     autocomplete_fields = ['aluno']
     inlines = [ResultadoInline]
+    list_select_related = ('teste', 'aluno__perfil__user')
 
     def get_form(self, request, obj=None, **kwargs):
         request._obj_atual = obj
@@ -207,7 +242,7 @@ class ResultadoTesteProgressoAdmin(admin.ModelAdmin):
 
 @admin.register(AlocacaoSala)
 class AlocacaoSalaAdmin(admin.ModelAdmin):
-    list_display = ('__str__', 'data_aplicacao', 'turno', 'sala')
+    list_display = ('__str__', 'tipo', 'qtd_alunos', 'data_aplicacao', 'turno', 'sala')
     list_filter = ('turno', 'sala__unidade', 'sala')
     search_fields = (
         'sala__nome', 'turma__materia', 'turma__curso__nome',
@@ -215,6 +250,20 @@ class AlocacaoSalaAdmin(admin.ModelAdmin):
     )
     date_hierarchy = 'data_aplicacao'
     autocomplete_fields = ['inscricao', 'turma', 'sala']
+    list_select_related = (
+        'sala__unidade', 'turma__curso', 'inscricao__teste', 'inscricao__aluno__perfil__user',
+    )
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).annotate(_alunos_turma=Count('turma__alunos', distinct=True))
+
+    @admin.display(description='Tipo')
+    def tipo(self, obj):
+        return 'Inscrição' if obj.inscricao_id else 'Turma'
+
+    @admin.display(description='Alunos', ordering='_alunos_turma')
+    def qtd_alunos(self, obj):
+        return 1 if obj.inscricao_id else obj._alunos_turma
 
 
 @admin.register(AlocacaoFiscal)
