@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin as BaseUserAdmin
 from django.contrib.auth.models import User
-from django.db.models import Count, Q
+from django.db.models import Count, OuterRef, Q, Subquery
 
 from .models import (
     Unidade, Sala, AlocacaoSala, Curso, Turma, Perfil, Aluno, Professor,
@@ -268,7 +268,7 @@ class AlocacaoSalaAdmin(admin.ModelAdmin):
 
 @admin.register(AlocacaoFiscal)
 class AlocacaoFiscalAdmin(admin.ModelAdmin):
-    list_display = ('professor', 'sala', 'data_aplicacao', 'turno')
+    list_display = ('professor', 'sala', 'data_aplicacao', 'turno', 'salas_no_dia')
     list_filter = ('turno', 'sala__unidade', 'sala')
     search_fields = (
         'sala__nome', 'professor__perfil__user__username',
@@ -276,6 +276,18 @@ class AlocacaoFiscalAdmin(admin.ModelAdmin):
     )
     date_hierarchy = 'data_aplicacao'
     autocomplete_fields = ['professor', 'sala']
+    list_select_related = ('professor__perfil__user', 'sala__unidade')
+
+    def get_queryset(self, request):
+        # quantas salas o professor fiscaliza no mesmo dia (todos os turnos)
+        no_dia = AlocacaoFiscal.objects.filter(
+            professor=OuterRef('professor'), data_aplicacao=OuterRef('data_aplicacao'),
+        ).order_by().values('professor').annotate(total=Count('pk')).values('total')
+        return super().get_queryset(request).annotate(_salas_no_dia=Subquery(no_dia))
+
+    @admin.display(description='Salas do professor no dia', ordering='_salas_no_dia')
+    def salas_no_dia(self, obj):
+        return obj._salas_no_dia
 
 
 # ---------- 6. Notificações ----------
