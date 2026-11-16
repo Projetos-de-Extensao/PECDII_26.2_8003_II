@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'app',
     'rest_framework',
+    'drf_spectacular',
 
 ]
 
@@ -127,4 +128,17 @@ MAILERS = {
     'default': {
         'BACKEND': 'django.core.mail.backends.console.EmailBackend',
     },
+}
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'API do Sistema de Teste de Progresso',
+    'DESCRIPTION': 'Documentação da API de gestão do Teste de Progresso: cadastros, inscrições, alocação de salas e fiscais, resultados e notificações.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'PREPROCESSING_HOOKS': ['project.schema.apenas_rotas_da_api'],
 }

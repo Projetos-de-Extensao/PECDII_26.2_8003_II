@@ -16,6 +16,7 @@ debugpy==1.8.21
 defusedxml==0.7.1
 Django==6.1.1
 djangorestframework==3.18.3
+drf-spectacular==0.30.0
 executing==2.2.1
 fastjsonschema==2.22.2
 ghp-import==2.1.0
@@ -24,6 +25,7 @@ httpcore==1.0.9
 httpx==0.27.2
 idna==3.19
 importlib_metadata==8.7.1
+inflection==0.5.1
 ipykernel==7.3.0
 ipython==9.17.0
 ipython_pygments_lexers==1.1.1
@@ -85,6 +87,7 @@ tornado==6.5.8
 traitlets==5.16.1
 typing_extensions==4.16.0
 tzdata==2026.5
+uritemplate==4.2.0
 urllib3==2.7.0
 watchdog==6.0.0
 wcwidth==0.8.3
